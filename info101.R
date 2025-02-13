@@ -11,17 +11,20 @@ library(marinecs100b)
 
 # P2 Critique the organization of woa.csv according to the characteristics of
 # tidy data.
-
+#multiple lines of headers
+#blank spaces instead of NA confuses computer
+#names aren't consistent
 
 
 # Importing data ----------------------------------------------------------
 
 # P3 P3 Call read.csv() on woa.csv. What error message do you get? What do you
 # think that means?
-
-
+read.cvs("woa.csv")
+#error, could not find function
+#likely due to too many lines of headers
 # P4 Re-write the call to read.csv() to avoid the error in P3.
-
+woa <- read.csv("woa.csv", skip = 1)
 
 
 # Fix the column names ----------------------------------------------------
@@ -30,28 +33,56 @@ library(marinecs100b)
 
 depths <- c(
   seq(0, 100, by = 5),
-  seq(???, ???, by = 25),
-  seq(???, ???, by = ???),
-  seq(???)
+  seq(125, 500, by = 25),
+  seq(550, 2000, by = 50),
+  seq(2100, 5500, by = 100)
 )
 
-
+depths
+colnames(woa)
 # P6 Create a vector called woa_colnames with clean names for all 104 columns.
 # Make them the column names of your WOA data frame.
 
-
-
+woa_colnames <- c("latitude", "longitude", depths)
+colnames(woa) <- woa_colnames
+woa
 # Analyzing wide-format data ----------------------------------------------
 
 # P7 What is the mean water temperature globally in the twilight zone (200-1000m
 # depth)?
 
+twilight_woa <- woa[, which(woa_colnames == 200) : which(woa_colnames == 1000)]
+twilight_woa
+
+wide_average <- function(dataset){
+  sum <- 0
+  n <- 0
+  for (i in 1:nrow(dataset)){
+    for (j in 1:ncol(dataset)){
+      if (!is.na(dataset[i, j])){
+        sum <- sum + dataset[i, j]
+        n <- n+1
+      }
+    }
+  }
+  return (sum/n)
+}
+wide_average(twilight_woa)
 
 
 # Analyzing long-format data ----------------------------------------------
 
 # P8 Using woa_long, find the mean water temperature globally in the twilight zone.
-
+woa_long[1, 3]
+s <- 0
+x <- 0
+for (i in 1:nrow(woa_long)){
+  if (woa_long[i, 3] >= 200 & woa_long[i, 3] <= 1000 & !is.na(woa_long[i, 4]){
+    s <- s + woa_long[i, 4]
+    x <- x + 1
+  }
+}
+s/x
 
 # P9 Compare and contrast your solutions to P8 and P9.
 
