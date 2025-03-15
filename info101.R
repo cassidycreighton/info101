@@ -1,6 +1,6 @@
 library(ggplot2)
 library(marinecs100b)
-
+remotes::install_github("MarineCS-100B/marinecs100b")
 
 # Questionable organization choices ---------------------------------------
 
@@ -77,21 +77,40 @@ woa_long[1, 3]
 s <- 0
 x <- 0
 for (i in 1:nrow(woa_long)){
-  if (woa_long[i, 3] >= 200 & woa_long[i, 3] <= 1000 & !is.na(woa_long[i, 4]){
+  if ((woa_long[i, 3] >= 200 & woa_long[i, 3] <= 1000) & !is.na(woa_long[i, 4])){
     s <- s + woa_long[i, 4]
     x <- x + 1
   }
 }
 s/x
-
+woa_long
 # P9 Compare and contrast your solutions to P8 and P9.
-
+#Same avearge
+#P8 is requires less lines of code
 
 # P10 Create a variable called mariana_temps. Filter woa_long to the rows in the
 # location nearest to the coordinates listed in the in-class instructions.
+d_from_m <- function(lat, long){
+  x= 11.21 - lat
+  y = 142.12 - long
+  z = sqrt(x^2 + y^2)
+  return (z)
+}
+clostest_index <- 1
+for (i in 2:nrow(woa_long)){
+  if (d_from_m(woa_long[i, 1], woa_long[i, 2]) < d_from_m(woa_long[i-1, 1], woa_long[i-1, 2])){
+    closest_index <- i
+  }
+}
+closest_lat <- woa_long[closest_index, 1]
+closest_long <- woa_long[closest_index, 2]
 
-
+mariana_temps <- woa_long[woa_long$latitude == closest_lat & woa_long$longitude == closest_long, ]
+mariana_temps
 # P11 Interpret your temperature-depth profile. What's the temperature at the surface? How about in the deepest parts? Over what depth range does temperature change the most?
+#surface temperature is -1.672C
+#temp at deepest point is 0.089C
+#temperature changes the most between 0m and 200m
 
 # ggplot is a tool for making figures, you'll learn its details in COMM101
 ggplot(mariana_temps, aes(temp_c, depth_m)) +
